@@ -20,16 +20,81 @@
 
 **Comparisons of the proposed generative end-to-end autonomous driving framework with the conventional pipeline.** Most existing methods follow a serial design of perception, prediction, and planning. They usually ignore the high-level interactions between the ego car and other agents and the structural prior of realistic trajectories. We model autonomous driving as a future generation problem and conduct motion prediction and ego planning simultaneously in a structural latent trajectory space.
 
-![framework](./assets/framework.png)
-
-**Framework of our generative end-to-end autonomous driving.** Given surrounding images as inputs, we employ an image backbone to extract multi-scale features and then use a BEV encoder to obtain BEV tokens. We then use cross-attention and deformable cross-attention to transform BEV tokens into map and agent tokens, respectively. With an additional ego token, we use self-attention to enable ego-agent interactions and cross-attention to further incorporate map information to obtain the instance-centric scene representation. We map this representation to a structural latent trajectory space which is jointly learned using ground-truth future trajectories. Finally, we employ a future trajectory generator to produce future trajectories to simultaneously complete motion prediction and planning.
-
 ## Results
 
 ![results](./assets/results.png)
 
 ## Code 
-Code will be released soon!
+### Dataset
+
+Download nuScenes V1.0 full dataset data and CAN bus expansion data [HERE](https://www.nuscenes.org/download). Prepare nuscenes data as follows.
+
+**Download CAN bus expansion**
+
+```
+# download 'can_bus.zip'
+unzip can_bus.zip 
+# move can_bus to data dir
+```
+
+**Prepare nuScenes data**
+
+*We genetate custom annotation files which are different from mmdet3d's*
+
+Generate the train file and val file:
+
+```
+python tools/data_converter/genad_nuscenes_converter.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag genad_nuscenes --version v1.0 --canbus ./data
+```
+
+Using the above code will generate `genad_nuscenes_infos_temporal_{train,val}.pkl`.
+
+**Folder structure**
+
+```
+GenAD
+├── projects/
+├── tools/
+├── configs/
+├── ckpts/
+│   ├── resnet50-19c8e357.pth
+├── data/
+│   ├── can_bus/
+│   ├── nuscenes/
+│   │   ├── maps/
+│   │   ├── samples/
+│   │   ├── sweeps/
+│   │   ├── v1.0-test/
+|   |   ├── v1.0-trainval/
+|   |   ├── genad_nuscenes_infos_train.pkl
+|   |   ├── genad_nuscenes_infos_val.pkl
+```
+
+### installation
+
+Detailed package versions can be found in [requirements.txt](../requirements.txt).
+
+- [Installation](docs/install.md)
+
+### Getting Started
+
+Train GenAD with 8 GPUs
+
+```shell
+cd /path/to/GenAD
+conda activate genad
+python -m torch.distributed.run --nproc_per_node=8 --master_port=2333 tools/train.py projects/configs/GenAD/GenAD_config.py --launcher pytorch --deterministic --work-dir path/to/save/outputs
+```
+
+Eval GenAD with 1 GPU
+
+```shell
+cd /path/to/GenAD
+conda activate genad
+CUDA_VISIBLE_DEVICES=0 python tools/test.py projects/configs/GenAD/GenAD_config.py /path/to/ckpt.pth --launcher none --eval bbox --tmpdir outputs
+```
+
+
 
 ## Related Projects
 

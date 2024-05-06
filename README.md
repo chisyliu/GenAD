@@ -10,6 +10,11 @@
 
 **GenAD casts autonomous driving as a generative modeling problem.**
 
+## News 
+
+**[2024/5/2]** Training and evaluation code release.
+**[2024/2/18]** Paper released on [arXiv](https://arxiv.org/pdf/2402.11502).
+
 ## Demo
 
 ![demo](./assets/demo.gif)

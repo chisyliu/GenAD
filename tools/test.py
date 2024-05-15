@@ -1,4 +1,8 @@
-
+# ---------------------------------------------
+# Copyright (c) OpenMMLab. All rights reserved.
+# ---------------------------------------------
+#  Modified by Zhiqi Li
+# ---------------------------------------------
 import sys
 sys.path.append('')
 import numpy as np
